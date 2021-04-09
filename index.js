@@ -3,7 +3,7 @@
 // ----------------------------------
 const mongoose = require("mongoose");
 
-const mongoURL = "mongodb+srv://dbUser:<password>@clustera4.gg5ii.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const mongoURL = "mongodb+srv://dbUser:temp123@clustera4.gg5ii.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
 const connectionOptions = {useNewUrlParser: true, useUnifiedTopology: true}
 
