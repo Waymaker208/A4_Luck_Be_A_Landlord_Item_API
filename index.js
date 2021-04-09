@@ -1,9 +1,9 @@
-/* // ----------------------------------
+// ----------------------------------
 // mongo setup
 // ----------------------------------
 const mongoose = require("mongoose");
 
-const mongoURL = "mongodb+srv://dbUser:0000@cluster0.zypj9.mongodb.net/college?retryWrites=true&w=majority"
+const mongoURL = "mongodb+srv://dbUser:<password>@clustera4.gg5ii.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
 const connectionOptions = {useNewUrlParser: true, useUnifiedTopology: true}
 
@@ -12,12 +12,12 @@ const connectionOptions = {useNewUrlParser: true, useUnifiedTopology: true}
 const Schema = mongoose.Schema
 
 const ItemSchema = new Schema({
-   name:String
-   rarity:String
-   description:String
+   name:String,
+   rarity:String,
+   description:String,
    goldPerTurn:int
 })
-const Item = mongoose.model("item_table", ItemSchema) */
+const Item = mongoose.model("item_table", ItemSchema)
 
 // ----------------------------------
 // express setup
