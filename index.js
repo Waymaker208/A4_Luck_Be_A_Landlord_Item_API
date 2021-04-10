@@ -26,10 +26,7 @@ const express = require("express");
 const app = express();
 app.use(express.json())
 const HTTP_PORT = process.env.PORT || 8080;
- 
 
- 
-// list of url endpoints that your server will respond to
 app.get("/", (req, res) => {
  res.send("Hello World!");
 });
@@ -37,48 +34,13 @@ app.get("/", (req, res) => {
 // ----------------------------------
 // Url endpoints
 // ----------------------------------
+
 // GET ALL
 app.get("/api/items", (req, res) => {
-    // 1. search the database for students and return them
     Item.find().exec().then(
         (results) => {
             console.log(results)
             res.send(results)
-        }
-    ).catch(
-        (err) => {
-            console.log(error)
-            res.status(500).send("Error when getting items from database.")
-        }
-    )
-    
-})
-
-// GET BY NAME
-// localhost:8080/items/Magpie
-app.get("/api/items/:item_name", (req,res) => {
-    // console.log(`Searching for: ${req.params.sid}`)
-
-})
-
-// INSERT 
-app.post("/api/items", (req, res) => {
-
-    // 1. what did the client send us
-    // - what data does the client want us insert into the database
-    console.log("I received this from the client:")
-    console.log(req.body)
-    
-    // 2. Take that information and CREATE someone in your database!
-    // - mongoose
-
-    Item.create(req.body).then(
-        (result) => {
-            //javascript
-            console.log("Create success!")
-            console.log(result)
-            // express
-            res.status(201).send("Insert success!")
         }
     ).catch(
         (err) => {
@@ -91,68 +53,108 @@ app.post("/api/items", (req, res) => {
             res.status(500).send(msg)
         }
     )
-    //  Item.create() 
+})
+
+// GET ONE
+app.get("/api/items/:item_name", (req, res) => {
+    console.log(`Searching for: ${req.params.item_name}`)
+
+    Item.findOne({name:req.params.item_name}).exec().then(
+       (results) => {
+           console.log(results)
+           res.send(results)
+       }
+   ).catch(
+        (err) => {
+            console.log(`Error`)
+            console.log(err)
+            const msg = {
+                statusCode:500,
+                msg: "Error when getting item from database."
+            }
+            res.status(500).send(msg)
+        }
+    )
+})
+
+// INSERT 
+app.post("/api/items", (req, res) => {
+
+    console.log("I received this from the client:")
+    console.log(req.body)
+
+    Item.create(req.body).then(
+        (result) => {
+            const msg = {
+                statusCode:201,
+                msg: "Create/Insert success!"
+            }
+            console.log(msg)
+            res.status(201).send(msg)
+        }
+    ).catch(
+        (err) => {
+            console.log(`Error`)
+            console.log(err)
+            const msg = {
+                statusCode:500,
+                msg: "Error when Creating/Inserting item into database."
+            }
+            res.status(500).send(msg)
+        }
+    )
 })
 
 // UPDATE BY ID
 app.put("/api/items/:item_id", (req,res) => {
 
-    // 1. you need a way to retrieve which record you want to update
-    // (id)
+    const msg = {
+        statusCode:501,
+        msg: "The requested endpoint is currently not available, but may be implemented in the future."
+    }
+    console.log(msg)
+    res.status(501).send(msg)
 
-    console.log(`Person wants to update: ${req.params.sid}`)
-    
-    // 2. you need a way to figure out WHAT should be updated
-    console.log(`What should the new updated data be?`)
-    console.log(req.body)
+})
 
-    // 3. Call the databse and make the update
+// DELETE BY NAME
+app.delete("/api/items/:item_name", (req,res) => {
 
-    // parameter 1: The record you want to update (it will search the db for the person with the specified id)
-    // parameter 2: A JSON object containing the information you want to update your record to    
-    // parameter 3: {new:true} --> Tells Mongo to send you back a copy of the updated record
-    Item.findOneAndUpdate({_id:req.params.sid},req.body,{new:true}).exec().then(
-        (updatedItem) => {
-            if (updatedItem === null) {
-                console.log("Could not find the item to update.")   
-                res.status(404).send("Could not find the item to update.")
+    console.log(`Item to Delete: ${req.params.item_name}`)
+    // 2. Send the id to the database
+    // - Use the mongoose Item.findByIdAndDelete
+
+    Item.findOneAndDelete({name:req.params.item_name}).exec().then(
+        (deletedItem) => {
+            if (deletedItem === null) {
+                const msg = {
+                    statusCode:404,
+                    msg: "Could not find an item to delete"
+                }
+                console.log(msg)
+                res.status(404).send(msg)
             }
             else {
-                console.log(updatedItem)
-                res.status(200).send(updatedItem)
+                console.log(deletedItem)
+                const msg = {
+                    statusCode:200,
+                    msg: "Item deleted successfully"
+                }
+                console.log(msg)
+                res.status(200).send(msg)
             }
         }
     ).catch(
         (err) => {
-            console.log(err)   
-            res.status(500).send("Error with the update")  
+            console.log(`Error`)
+            console.log(err)
+            const msg = {
+                statusCode:500,
+                msg: "Error when Deleting item from database."
+            }
+            res.status(500).send(msg)
         }
     )
-})
-
-
-// DELETE BY ID
-app.delete("/api/items/:item_name", (req,res) => {
-    res.status(501).send("Not implemented")  
-
-    // @TODO:
-    // 1. Get the id of the student you want to delete from the request params
-    // 2. Send the id to the database
-    // - Use the mongoose Item.findByIdAndDelete
-    // Item.findByIdAndDelete("sdfsdf").exec().then(
-    //     (deletedItem) => {
-    //         if (deletedItem === null) {           
-    //             console.log("Could not find an item to delete")
-    //         }
-    //         else {
-    //             console.log(deletedItem)
-    //         }
-    //     }
-    // ).catch(
-    //     (err) => {
-    //         console.log(err)
-    //     }
-    // )
 })
  
 // ----------------------------------
@@ -162,9 +164,6 @@ const onHttpStart = () => {
     console.log(`Server has started and is listening on port ${HTTP_PORT}`)
 }
 
-
-// 1. connect to the databas
-// 2. AFTER you successfully connect, that you start he expres server
 mongoose.connect(mongoURL, connectionOptions).then(
     () => {
          console.log("Connection success")
