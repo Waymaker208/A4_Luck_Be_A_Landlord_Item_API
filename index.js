@@ -60,10 +60,21 @@ app.get("/api/items/:item_name", (req, res) => {
     console.log(`Searching for: ${req.params.item_name}`)
 
     Item.findOne({name:req.params.item_name}).exec().then(
-       (results) => {
-           console.log(results)
-           res.send(results)
-       }
+        (result) => {
+            if (result) {
+                console.log(result)
+                res.status(200).send(result)
+            }
+            else {
+                console.log(result)
+                const msg = {
+                    statusCode:404,
+                    msg: "Item not Found!"
+                }
+                console.log(msg)
+                res.status(404).send(msg)
+            }
+        }
    ).catch(
         (err) => {
             console.log(`Error`)
