@@ -14,8 +14,8 @@ const Schema = mongoose.Schema
 const ItemSchema = new Schema({
    name:String,
    rarity:String,
-   description:String,
-   goldPerTurn:Number
+   description:{String, required: false},
+   goldPerTurn:{Number, required: false}
 })
 const Item = mongoose.model("item_table", ItemSchema)
 
@@ -29,7 +29,7 @@ const HTTP_PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
  res.send("Hello World!");
-});
+}) 
 
 // ----------------------------------
 // Url endpoints
@@ -40,7 +40,7 @@ app.get("/api/items", (req, res) => {
     Item.find().exec().then(
         (results) => {
             console.log(results)
-            res.send(results)
+            res.status(200).send(results)
         }
     ).catch(
         (err) => {
@@ -48,7 +48,7 @@ app.get("/api/items", (req, res) => {
             console.log(err)
             const msg = {
                 statusCode:500,
-                msg: "Error when getting items from database."
+                msg: "An internal error occurred on the server side."
             }
             res.status(500).send(msg)
         }
@@ -69,7 +69,7 @@ app.get("/api/items/:item_name", (req, res) => {
                 console.log(result)
                 const msg = {
                     statusCode:404,
-                    msg: "Item not Found!"
+                    msg: "The item the user requested information about could not be found in the database."
                 }
                 console.log(msg)
                 res.status(404).send(msg)
@@ -81,7 +81,7 @@ app.get("/api/items/:item_name", (req, res) => {
             console.log(err)
             const msg = {
                 statusCode:500,
-                msg: "Error when getting item from database."
+                msg: "An internal error occurred on the server side."
             }
             res.status(500).send(msg)
         }
@@ -94,11 +94,20 @@ app.post("/api/items", (req, res) => {
     console.log("I received this from the client:")
     console.log(req.body)
 
+    if(req.body.hasOwnProperty("name") === false || req.body.hasOwnProperty("rarity") === false){
+        const msg = {
+            statusCode:422,
+            msg: "You are missing either a name or rarity in your request."
+        }
+        res.status(422).send(msg)
+        return
+    }
+
     Item.create(req.body).then(
         (result) => {
             const msg = {
                 statusCode:201,
-                msg: "Create/Insert success!"
+                msg: "The request was fulfilled and a new resource was created."
             }
             console.log(msg)
             res.status(201).send(msg)
@@ -109,7 +118,7 @@ app.post("/api/items", (req, res) => {
             console.log(err)
             const msg = {
                 statusCode:500,
-                msg: "Error when Creating/Inserting item into database."
+                msg: "An internal error occurred on the server side."
             }
             res.status(500).send(msg)
         }
@@ -140,7 +149,7 @@ app.delete("/api/items/:item_name", (req,res) => {
             if (deletedItem === null) {
                 const msg = {
                     statusCode:404,
-                    msg: "Could not find an item to delete"
+                    msg: "The item the user requested to delete could not be found in the database."
                 }
                 console.log(msg)
                 res.status(404).send(msg)
@@ -149,7 +158,7 @@ app.delete("/api/items/:item_name", (req,res) => {
                 console.log(deletedItem)
                 const msg = {
                     statusCode:200,
-                    msg: "Item deleted successfully"
+                    msg: "The request was successfully processed by the server."
                 }
                 console.log(msg)
                 res.status(200).send(msg)
@@ -161,11 +170,19 @@ app.delete("/api/items/:item_name", (req,res) => {
             console.log(err)
             const msg = {
                 statusCode:500,
-                msg: "Error when Deleting item from database."
+                msg: "An internal error occurred on the server side."
             }
             res.status(500).send(msg)
         }
     )
+})
+
+app.use(function (req, res, next) {
+    const msg = {
+        statusCode:404,
+        msg: "The requested endpoint does not exist."
+    }
+    res.status(404).send(msg)
 })
  
 // ----------------------------------
