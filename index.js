@@ -27,9 +27,9 @@ const app = express();
 app.use(express.json())
 const HTTP_PORT = process.env.PORT || 8080;
 
-app.get("/", (req, res) => {
- res.send("Hello World!");
-}) 
+// app.get("/", (req, res) => {
+//  res.send("Hello World!");
+// }) 
 
 // ----------------------------------
 // Url endpoints
