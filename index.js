@@ -3,7 +3,7 @@
 // ----------------------------------
 const mongoose = require("mongoose");
 
-const mongoURL = "mongodb+srv://dbUser:temp123@clustera4.gg5ii.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const mongoURL = "mongodb+srv://dbUser:0000@clustera4.gg5ii.mongodb.net/A4?retryWrites=true&w=majority"
 
 const connectionOptions = {useNewUrlParser: true, useUnifiedTopology: true}
 
@@ -15,7 +15,7 @@ const ItemSchema = new Schema({
    name:String,
    rarity:String,
    description:String,
-   goldPerTurn:int
+   goldPerTurn:Number
 })
 const Item = mongoose.model("item_table", ItemSchema)
 
