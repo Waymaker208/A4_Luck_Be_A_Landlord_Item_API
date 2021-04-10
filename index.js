@@ -27,9 +27,14 @@ const app = express();
 app.use(express.json())
 const HTTP_PORT = process.env.PORT || 8080;
 
-// app.get("/", (req, res) => {
-//  res.send("Hello World!");
-// }) 
+app.get("/", (req, res) => {
+    const msg = {
+    statusCode:200,
+    msg: "Luck Be A Landlord Item API"
+    }
+    console.log(msg)
+    res.status(200).send(msg)
+}) 
 
 // ----------------------------------
 // Url endpoints
